@@ -3,6 +3,8 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import bot
+from data_base import sqlite_db
+from keyboards import kb_admin
 
 ID = None
 
@@ -16,7 +18,7 @@ class FSMAdmin(StatesGroup):
 async def make_chages_command(message : types.Message):
     global ID
     ID = message.from_user.id
-    await bot.send_message(message.from_user.id, 'Слушаю:')
+    await bot.send_message(message.from_user.id, 'Слушаю:', reply_markup=kb_admin)
     await message.delete()
 
 # commands='Загрузить', state=None
@@ -66,9 +68,7 @@ async def load_price(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data['price'] = float(message.text)
 
-        async with state.proxy() as data:
-            await message.reply(str(data))
-
+        await sqlite_db.sql_add_command(state)
         await state.finish()
 
 
