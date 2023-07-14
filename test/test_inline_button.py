@@ -35,6 +35,7 @@ dp = Dispatcher(bot)
 
 # инлайн кнопки
 
+lst_human = {}
 question = {True: 0, False: 0}
 
 in_kb = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Like', callback_data='like_1'),
@@ -47,10 +48,13 @@ async def test_commands(message: types.Message):
 @dp.callback_query_handler(Text(startswith='like_'))
 async def www_cal(callback_message: types.CallbackQuery):
     res = int(callback_message.data.split('_')[1])
-    question[res > 0] += 1
-    await callback_message.answer(str(question), show_alert=True)
-
-
+    user_id = f'callback_message.from_user.id'
+    if user_id not in lst_human:
+        lst_human[user_id] = res > 0
+        question[res > 0] += 1
+        await callback_message.answer('Вы проголосовали!')
+    else:
+        await callback_message.answer('Вы уже проголосовали!')
 
 # await callback_message.answer()
 # await callback_message.answer('Кнопка нажата', show_alert=True)
