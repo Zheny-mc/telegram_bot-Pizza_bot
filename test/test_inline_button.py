@@ -37,15 +37,17 @@ dp = Dispatcher(bot)
 
 lst_human = {}
 question = {True: 0, False: 0}
+NAME_COMMAND = 'like_'
 
-in_kb = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Like', callback_data='like_1'),
-                                              InlineKeyboardButton(text='DizLike', callback_data='like_-1'))
+
+in_kb = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Like', callback_data=f'{NAME_COMMAND}1'),
+                                              InlineKeyboardButton(text='DizLike', callback_data=f'{NAME_COMMAND}-1'))
 
 @dp.message_handler(commands='test')
 async def test_commands(message: types.Message):
     await message.answer('Inline button:', reply_markup=in_kb)
 
-@dp.callback_query_handler(Text(startswith='like_'))
+@dp.callback_query_handler(Text(startswith=NAME_COMMAND))
 async def www_cal(callback_message: types.CallbackQuery):
     res = int(callback_message.data.split('_')[1])
     user_id = f'callback_message.from_user.id'

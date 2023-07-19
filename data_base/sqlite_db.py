@@ -5,6 +5,7 @@ from aiogram import types
 SQL_CREATE_TABLE = 'CREATE TABLE IF NOT EXISTS menu(img TEXT, name TEXT PRIMARY KEY, description TEXT, price TEXT)'
 SQL_INSERT = 'INSERT INTO menu VALUES (?, ?, ?, ?)'
 SQL_SELECT = 'SELECT * FROM menu'
+SQL_DELETE = 'DELETE FROM menu WHERE name == ?'
 
 def sql_start():
     global base, cur
@@ -24,3 +25,9 @@ async def sql_read_menu(message: types.Message):
     for ret in cur.execute(SQL_SELECT).fetchall():
         await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена: {ret[3]}')
 
+async def sql_read_data_menu():
+    return cur.execute(SQL_SELECT).fetchall()
+
+async def sql_delete_command(data):
+    cur.execute(SQL_DELETE, (data,))
+    base.commit()
